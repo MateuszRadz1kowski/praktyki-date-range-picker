@@ -3,8 +3,13 @@ Etap 1
   po kliknieciu daty wszystkie daty pomiedzy pierwszym kliknieciem daty a drugim sie podswietlaja, kolejne klikniece resetuje ten widok o kolejne daty do wyboru
 Etap 2
   zapamietuje zaznaczone wczesniej dni, wszystkie filtry dzialaja tylko na tych dniach
+    gdy kliknieto np 3 przeleciec przez wszystkie dni pomiedzy rangem i poprzez getDay w date-fns jesli returnuje 2(srode) passuje dalej
 Etap 3
   uzytkownik klika sobie gdzie chce i jak chce zmienia
 Etap 4
   prosty, dodatkowy opis
 Caly czas towrzy sie opis ktory uwzglednia zmiany zrobione w poprzednich etapach
+
+Bledy do naprawienia pozniej:
+przy zmianie etapu idac do tylu nie zapisuje sie stan zaznaczen
+

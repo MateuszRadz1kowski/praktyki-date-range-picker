@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Step1 from "./components/steps/Step1";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
+import Step2 from "./components/steps/Step2";
 
 export default function App() {
 	const [selectedRange, setSelectedRange] = useState({ from: null, to: null });
@@ -56,7 +57,7 @@ export default function App() {
 
 			<main className="flex-grow overflow-auto p-2">
 				{step === 1 && <Step1 onRangeChange={setSelectedRange} />}
-				<div className="bg-white border border-gray-300 min-h-full rounded-sm"></div>
+				{step === 2 && <Step2 selectedRange={selectedRange} />}
 			</main>
 
 			<footer className="bg-white border-t border-gray-300 p-2 text-center">

@@ -13,6 +13,7 @@ export default function Month({
 	const blanks = [...Array(firstDayOffset).keys()];
 
 	const getDayStatus = (day) => {
+		if (!selectedRange || !selectedRange.from) return "";
 		const currentDate = startOfDay(new Date(year, monthIndex, day));
 		const from = startOfDay(selectedRange.from);
 		if (isSameDay(currentDate, from)) return "bg-gray-800 text-white font-bold";
