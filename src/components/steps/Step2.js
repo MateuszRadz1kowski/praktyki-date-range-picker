@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getMonthsData } from "../functions/getMonthData";
 import Month from "../Month";
 
@@ -11,31 +11,35 @@ export default function Step2({ selectedRange }) {
 	const letters = ["A", "B", "C", "D", "E"];
 	const numbers = ["1", "2", "3", "4", "5", "6", "7"];
 
-	const toggleNumber = (num) => {
-		setSelectedLetter(null);
-		setSelectedNums((prev) =>
-			prev.includes(num) ? prev.filter((n) => n !== num) : [...prev, num],
-		);
+	const selectLetter = (l) => {
+		setSelectedNums([]);
+		setSelectedLetter(selectedLetter === l ? null : l);
 	};
 
-	const selectLetter = (letter) => {
-		setSelectedNums([]);
-		setSelectedLetter(selectedLetter == letter ? null : letter);
+	const toggleNumber = (n) => {
+		setSelectedLetter(null);
+		setSelectedNums((prev) =>
+			prev.includes(n) ? prev.filter((num) => num !== n) : [...prev, n],
+		);
 	};
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="bg-gray-50 border border-gray-300 p-4 rounded-sm flex flex-wrap gap-6 items-center shadow-inner">
-				<div className="flex flex-col gap-1">
-					<span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-						Opcje (A-E)
+			<div className="bg-gray-50 border border-gray-300 p-4 rounded-sm shadow-sm flex flex-wrap gap-8 items-start">
+				<div className="flex flex-col gap-2">
+					<span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+						Zestaw (A-E)
 					</span>
 					<div className="flex gap-1">
 						{letters.map((l) => (
 							<button
 								key={l}
 								onClick={() => selectLetter(l)}
-								className={`w-8 h-8 flex items-center justify-center border rounded font-bold transition-all ${selectedLetter === l ? "bg-blue-600 text-white border-blue-700" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"}`}
+								className={`w-9 h-9 flex items-center justify-center border rounded font-bold transition-all ${
+									selectedLetter === l
+										? "bg-blue-600 text-white border-blue-700 shadow-md"
+										: "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+								}`}
 							>
 								{l}
 							</button>
@@ -43,8 +47,8 @@ export default function Step2({ selectedRange }) {
 					</div>
 				</div>
 
-				<div className="flex flex-col gap-1">
-					<span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+				<div className="flex flex-col gap-2">
+					<span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
 						Dni tygodnia (1-7)
 					</span>
 					<div className="flex gap-1">
@@ -52,7 +56,11 @@ export default function Step2({ selectedRange }) {
 							<button
 								key={n}
 								onClick={() => toggleNumber(n)}
-								className={`w-8 h-8 flex items-center justify-center border rounded font-bold transition-all ${selectedNums.includes(n) ? "bg-green-600 text-white border-green-700" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"}`}
+								className={`w-9 h-9 flex items-center justify-center border rounded font-bold transition-all ${
+									selectedNums.includes(n)
+										? "bg-green-600 text-white border-green-700 shadow-md"
+										: "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+								}`}
 							>
 								{n}
 							</button>
@@ -60,13 +68,17 @@ export default function Step2({ selectedRange }) {
 					</div>
 				</div>
 
-				<div className="flex flex-col gap-1">
-					<span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-						Ewentualnie
+				<div className="flex flex-col gap-2">
+					<span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+						Inne
 					</span>
 					<button
 						onClick={() => setIsF(!isF)}
-						className={`w-8 h-8 flex items-center justify-center border rounded font-bold transition-all ${isF ? "bg-orange-500 text-white border-orange-600" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"}`}
+						className={`w-9 h-9 flex items-center justify-center border rounded font-bold transition-all ${
+							isF
+								? "bg-orange-500 text-white border-orange-600 shadow-md"
+								: "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+						}`}
 					>
 						F
 					</button>
@@ -82,6 +94,7 @@ export default function Step2({ selectedRange }) {
 						daysInMonth={m.daysCount}
 						firstDayOffset={m.offset}
 						selectedRange={selectedRange}
+						activeNums={selectedNums}
 						onDateClick={() => {}}
 					/>
 				))}

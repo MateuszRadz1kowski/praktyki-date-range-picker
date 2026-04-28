@@ -7,25 +7,44 @@ export default function Month({
 	daysInMonth,
 	firstDayOffset,
 	selectedRange,
+	activeNums = [],
 	onDateClick,
 }) {
 	const days = [...Array(daysInMonth).keys()].map((num) => num + 1);
 	const blanks = [...Array(firstDayOffset).keys()];
 
-	const getDayStatus = (day) => {
-		if (!selectedRange || !selectedRange.from) return "";
+	const getDayColour = (day) => {
+		if (!selectedRange?.from) return "";
+
 		const currentDate = startOfDay(new Date(year, monthIndex, day));
 		const from = startOfDay(selectedRange.from);
+
+		if (selectedRange.to && activeNums.length > 0) {
+			const to = startOfDay(selectedRange.to);
+			const isInRange = isWithinInterval(currentDate, { start: from, end: to });
+
+			if (!isInRange) return "";
+
+			let dayOfWeek = currentDate.getDay();
+			if (dayOfWeek === 0) dayOfWeek = 7;
+
+			if (activeNums.includes(dayOfWeek.toString())) {
+				return "bg-gray-800 text-white font-bold";
+			}
+			return "";
+		}
+
 		if (isSameDay(currentDate, from)) return "bg-gray-800 text-white font-bold";
 
 		if (selectedRange.to) {
 			const to = startOfDay(selectedRange.to);
-			if (isSameDay(currentDate, to)) return "bg-gray-800 text-white font-bold";
+			const isInRange = isWithinInterval(currentDate, { start: from, end: to });
 
-			if (isWithinInterval(currentDate, { start: from, end: to })) {
-				return "bg-gray-400 text-white";
-			}
+			if (isSameDay(currentDate, to)) return "bg-gray-800 text-white font-bold";
+			if (isInRange) return "bg-gray-400 text-white";
 		}
+
+		return "";
 	};
 
 	const monthName = new Date(year, monthIndex).toLocaleString("pl-PL", {
@@ -55,7 +74,7 @@ export default function Month({
 					<div
 						key={`day-${monthIndex}-${day}`}
 						onClick={() => onDateClick(new Date(year, monthIndex, day))}
-						className={`h-6 flex items-center justify-center border-b border-r border-gray-100 cursor-pointer hover:bg-blue-100 transition-colors ${getDayStatus(day)}`}
+						className={`h-6 flex items-center justify-center border-b border-r border-gray-100 cursor-pointer hover:bg-blue-100 transition-colors ${getDayColour(day)}`}
 					>
 						{day}
 					</div>
