@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import CalendarGrid from "./components/CalendarGrid";
+import Step1 from "./components/steps/Step1";
+import { format } from "date-fns";
+import { pl } from "date-fns/locale";
 
 export default function App() {
+	const [selectedRange, setSelectedRange] = useState({ from: null, to: null });
 	const [step, setStep] = useState(1);
 	const totalSteps = 4;
 
@@ -52,14 +55,15 @@ export default function App() {
 			</nav>
 
 			<main className="flex-grow overflow-auto p-2">
-				<div className="bg-white border border-gray-300 min-h-full rounded-sm">
-					<CalendarGrid />
-				</div>
+				{step === 1 && <Step1 onRangeChange={setSelectedRange} />}
+				<div className="bg-white border border-gray-300 min-h-full rounded-sm"></div>
 			</main>
 
-			<footer className="bg-white border-t border-gray-300 p-2 text-center shadow-[0_-1px_3px_rgba(0,0,0,0.05)]">
-				<div className="text-[13px] text-gray-700 font-medium">
-					kursuje w (1)-(7)
+			<footer className="bg-white border-t border-gray-300 p-2 text-center">
+				<div className="text-[13px] text-gray-700 font-medium italic">
+					{selectedRange.from && selectedRange.to
+						? `kursuje od ${format(selectedRange.from, "dd MMMM yyyy", { locale: pl })} do ${format(selectedRange.to, "d MMMM yyyy", { locale: pl })}`
+						: "wybierz zakres dat na kalendarzu"}
 				</div>
 			</footer>
 		</div>
