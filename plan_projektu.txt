@@ -1,0 +1,10 @@
+Komponent kalendarz, bazowy miesiac, wrzuca sie w propsach wiekszosc jego cech (opis-Kwiecien 2026, ilosc dni w miesiacu, pierwszy dzien miesiaca-sroda itp.)
+Etap 1
+  po kliknieciu daty wszystkie daty pomiedzy pierwszym kliknieciem daty a drugim sie podswietlaja, kolejne klikniece resetuje ten widok o kolejne daty do wyboru
+Etap 2
+  zapamietuje zaznaczone wczesniej dni, wszystkie filtry dzialaja tylko na tych dniach
+Etap 3
+  uzytkownik klika sobie gdzie chce i jak chce zmienia
+Etap 4
+  prosty, dodatkowy opis
+Caly czas towrzy sie opis ktory uwzglednia zmiany zrobione w poprzednich etapach
