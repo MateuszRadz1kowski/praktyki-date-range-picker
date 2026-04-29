@@ -15,6 +15,14 @@ export const staticHolidays = [
 	{ month: 11, day: 26 },
 ];
 
+const letter_tooltip = {
+	A: "kursuje od poniedziałku do piątku",
+	B: "kursuje od poniedziałku do piątku i w niedziele",
+	C: "kursuje w soboty, niedziele i święta",
+	D: "kursuje od poniedziałku do piątku oprócz świąt",
+	E: "kursuje od poniedziałku do soboty oprócz świąt",
+};
+
 export default function Step2({
 	selectedRange,
 	limitationText,
@@ -24,7 +32,8 @@ export default function Step2({
 	const [selectedLetter, setSelectedLetter] = useState(null);
 	const [selectedNums, setSelectedNums] = useState([]);
 	const [isF, setIsF] = useState(false);
-
+	const [tooltip, setTooltip] = useState(null);
+	const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
 	const letters = ["A", "B", "C", "D", "E"];
 	const numbers = ["1", "2", "3", "4", "5", "6", "7"];
 
@@ -100,6 +109,14 @@ export default function Step2({
 										? "bg-blue-600 text-white border-blue-700 shadow-md"
 										: "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
 								}`}
+								onMouseEnter={(e) => {
+									setTooltip(letter_tooltip[l]);
+									setTooltipPos({ x: e.clientX, y: e.clientY });
+								}}
+								onMouseMove={(e) =>
+									setTooltipPos({ x: e.clientX, y: e.clientY })
+								}
+								onMouseLeave={() => setTooltip(null)}
 							>
 								{l}
 							</button>
@@ -144,7 +161,14 @@ export default function Step2({
 					</button>
 				</div>
 			</div>
-
+			{tooltip && (
+				<div
+					className="fixed z-50 bg-gray-800 text-xs text-gray-100 px-2 py-1 pointer-events-none shadow text-base rounded"
+					style={{ left: tooltipPos.x + 12, top: tooltipPos.y + 16 }}
+				>
+					{tooltip}
+				</div>
+			)}
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-1">
 				{getMonthsData().map((m) => (
 					<Month

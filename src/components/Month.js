@@ -96,7 +96,7 @@ export default function Month({
 			const isInRange = isWithinInterval(currentDate, { start: from, end: to });
 
 			if (isSameDay(currentDate, to)) return "bg-gray-800 text-white font-bold";
-			if (isInRange) return "bg-gray-400 text-white";
+			if (isInRange) return "bg-gray-800 text-white";
 		}
 
 		return "";

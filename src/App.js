@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Step1 from "./components/steps/Step1";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
+import Step1 from "./components/steps/Step1";
 import Step2 from "./components/steps/Step2";
 
 export default function App() {
