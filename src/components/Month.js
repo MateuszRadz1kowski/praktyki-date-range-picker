@@ -1,5 +1,6 @@
 import React from "react";
 import { isSameDay, isWithinInterval, startOfDay } from "date-fns";
+import { staticHolidays } from "./steps/Step2";
 
 export default function Month({
 	year,
@@ -8,6 +9,7 @@ export default function Month({
 	firstDayOffset,
 	selectedRange,
 	activeNums = [],
+	activeLetter = [],
 	onDateClick,
 }) {
 	const days = [...Array(daysInMonth).keys()].map((num) => num + 1);
@@ -32,6 +34,59 @@ export default function Month({
 				return "bg-gray-800 text-white font-bold";
 			}
 			return "";
+		}
+
+		if (selectedRange.to && activeLetter != []) {
+			const to = startOfDay(selectedRange.to);
+			const isInRange = isWithinInterval(currentDate, { start: from, end: to });
+
+			if (!isInRange) return "";
+
+			let dayOfWeek = currentDate.getDay();
+			if (dayOfWeek == 0) dayOfWeek = 7;
+
+			if (activeLetter == "A") {
+				if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+					return "bg-gray-800 text-white font-bold";
+				} else {
+					return "";
+				}
+			} else if (activeLetter == "B") {
+				if ((dayOfWeek >= 1 && dayOfWeek <= 5) || dayOfWeek == 7) {
+					return "bg-gray-800 text-white font-bold";
+				} else {
+					return "";
+				}
+			} else if (activeLetter == "C") {
+				if (
+					(dayOfWeek >= 6 && dayOfWeek <= 7) ||
+					staticHolidays.some((h) => h.month == monthIndex && h.day == day)
+				) {
+					return "bg-gray-800 text-white font-bold";
+				} else {
+					return "";
+				}
+			} else if (activeLetter == "D") {
+				if (
+					dayOfWeek >= 1 &&
+					dayOfWeek <= 5 &&
+					!staticHolidays.some((h) => h.month == monthIndex && h.day == day)
+				) {
+					return "bg-gray-800 text-white font-bold";
+				} else {
+					return "";
+				}
+			} else if (activeLetter == "E") {
+				if (
+					dayOfWeek >= 1 &&
+					dayOfWeek <= 6 &&
+					!staticHolidays.some((h) => h.month == monthIndex && h.day == day)
+				) {
+					return "bg-gray-800 text-white font-bold";
+				} else {
+					return "";
+				}
+			}
 		}
 
 		if (isSameDay(currentDate, from)) return "bg-gray-800 text-white font-bold";

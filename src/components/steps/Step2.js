@@ -2,6 +2,18 @@ import React, { useState, useEffect } from "react";
 import { getMonthsData } from "../functions/getMonthData";
 import Month from "../Month";
 
+export const staticHolidays = [
+	{ month: 0, day: 1 },
+	{ month: 0, day: 6 },
+	{ month: 4, day: 1 },
+	{ month: 4, day: 3 },
+	{ month: 7, day: 15 },
+	{ month: 10, day: 1 },
+	{ month: 10, day: 11 },
+	{ month: 11, day: 25 },
+	{ month: 11, day: 26 },
+];
+
 export default function Step2({ selectedRange }) {
 	const monthsData = getMonthsData();
 	const [selectedLetter, setSelectedLetter] = useState(null);
@@ -95,6 +107,7 @@ export default function Step2({ selectedRange }) {
 						firstDayOffset={m.offset}
 						selectedRange={selectedRange}
 						activeNums={selectedNums}
+						activeLetter={selectedLetter}
 						onDateClick={() => {}}
 					/>
 				))}
