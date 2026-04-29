@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getMonthsData } from "../functions/getMonthData";
 import Month from "../Month";
+import { set } from "date-fns";
 
 export const staticHolidays = [
 	{ month: 0, day: 1 },
@@ -14,7 +15,11 @@ export const staticHolidays = [
 	{ month: 11, day: 26 },
 ];
 
-export default function Step2({ selectedRange }) {
+export default function Step2({
+	selectedRange,
+	limitationText,
+	setLimitationsText,
+}) {
 	const monthsData = getMonthsData();
 	const [selectedLetter, setSelectedLetter] = useState(null);
 	const [selectedNums, setSelectedNums] = useState([]);
@@ -23,9 +28,50 @@ export default function Step2({ selectedRange }) {
 	const letters = ["A", "B", "C", "D", "E"];
 	const numbers = ["1", "2", "3", "4", "5", "6", "7"];
 
+	const generateNumbersText = (nums) => {
+		const sorted = [...nums].map(Number).sort((a, b) => a - b);
+		let ranges = [];
+		let start = sorted[0];
+		let end = sorted[0];
+		for (let i = 1; i <= sorted.length; i++) {
+			if (sorted[i] == end + 1) {
+				end = sorted[i];
+			} else {
+				ranges.push(start == end ? `(${start})` : `(${start})-(${end})`);
+				start = sorted[i];
+				end = sorted[i];
+			}
+		}
+		return ranges.join(",");
+	};
+
+	useEffect(() => {
+		let text = "w ";
+
+		if (selectedLetter) {
+			text += `(${selectedLetter})`;
+		} else {
+			if (selectedNums.length == 0 || selectedNums.length == 7) {
+				text += "(1)-(7)";
+			} else {
+				text += generateNumbersText(selectedNums);
+			}
+		}
+
+		if (isF) {
+			text += ",(F)";
+		}
+
+		setLimitationsText(text);
+	}, [selectedLetter, selectedNums, isF, setLimitationsText]);
+
 	const selectLetter = (l) => {
-		setSelectedNums([]);
-		setSelectedLetter(selectedLetter === l ? null : l);
+		if (selectedLetter === l) {
+			setSelectedLetter(null);
+		} else {
+			setSelectedLetter(l);
+			setSelectedNums([]);
+		}
 	};
 
 	const toggleNumber = (n) => {
@@ -34,6 +80,8 @@ export default function Step2({ selectedRange }) {
 			prev.includes(n) ? prev.filter((num) => num !== n) : [...prev, n],
 		);
 	};
+
+	const toggleF = () => setIsF(!isF);
 
 	return (
 		<div className="flex flex-col gap-4">
@@ -85,7 +133,7 @@ export default function Step2({ selectedRange }) {
 						Inne
 					</span>
 					<button
-						onClick={() => setIsF(!isF)}
+						onClick={toggleF}
 						className={`w-9 h-9 flex items-center justify-center border rounded font-bold transition-all ${
 							isF
 								? "bg-orange-500 text-white border-orange-600 shadow-md"
@@ -98,7 +146,7 @@ export default function Step2({ selectedRange }) {
 			</div>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-1">
-				{monthsData.map((m) => (
+				{getMonthsData().map((m) => (
 					<Month
 						key={m.id}
 						year={m.year}
@@ -106,7 +154,11 @@ export default function Step2({ selectedRange }) {
 						daysInMonth={m.daysCount}
 						firstDayOffset={m.offset}
 						selectedRange={selectedRange}
-						activeNums={selectedNums}
+						activeNums={
+							!selectedLetter && selectedNums.length == 0
+								? numbers
+								: selectedNums
+						}
 						activeLetter={selectedLetter}
 						onDateClick={() => {}}
 					/>

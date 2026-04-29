@@ -6,6 +6,7 @@ import Step2 from "./components/steps/Step2";
 
 export default function App() {
 	const [selectedRange, setSelectedRange] = useState({ from: null, to: null });
+	const [limitationsText, setLimitationsText] = useState("w (1)-(7)");
 	const [step, setStep] = useState(1);
 	const totalSteps = 4;
 
@@ -57,13 +58,19 @@ export default function App() {
 
 			<main className="flex-grow overflow-auto p-2">
 				{step === 1 && <Step1 onRangeChange={setSelectedRange} />}
-				{step === 2 && <Step2 selectedRange={selectedRange} />}
+				{step === 2 && (
+					<Step2
+						selectedRange={selectedRange}
+						limitationText={limitationsText}
+						setLimitationsText={setLimitationsText}
+					/>
+				)}
 			</main>
 
 			<footer className="bg-white border-t border-gray-300 p-2 text-center">
 				<div className="text-[13px] text-gray-700 font-medium italic">
 					{selectedRange.from && selectedRange.to
-						? `kursuje od ${format(selectedRange.from, "dd MMMM yyyy", { locale: pl })} do ${format(selectedRange.to, "d MMMM yyyy", { locale: pl })}`
+						? `kursuje od ${format(selectedRange.from, "dd MMMM yyyy", { locale: pl })} do ${format(selectedRange.to, "d MMMM yyyy", { locale: pl })} ${limitationsText}`
 						: "wybierz zakres dat na kalendarzu"}
 				</div>
 			</footer>
