@@ -87,7 +87,15 @@ export default function App() {
 			<footer className="bg-white border-t border-gray-300 p-2 text-center">
 				<div className="text-[13px] text-gray-700 font-medium italic">
 					{selectedRange.from && selectedRange.to
-						? `kursuje od ${format(selectedRange.from, "dd MMMM yyyy", { locale: pl })} do ${format(selectedRange.to, "d MMMM yyyy", { locale: pl })} ${limitationsText}`
+						? `kursuje od ${format(selectedRange.from, "dd MMMM yyyy", { locale: pl })} do ${format(selectedRange.to, "d MMMM yyyy", { locale: pl })} ${limitationsText}${
+								exceptions.add.length > 0
+									? ` oraz ${exceptions.add.map((day) => format(new Date(day), "d.MM")).join(", ")}`
+									: ""
+							}${
+								exceptions.remove.length > 0
+									? ` oprócz ${exceptions.remove.map((day) => format(new Date(day), "d.MM")).join(", ")}`
+									: ""
+							}`
 						: "wybierz zakres dat na kalendarzu"}
 				</div>
 			</footer>

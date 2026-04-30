@@ -65,7 +65,7 @@ export default function Month({
 		if (exceptions.add.includes(dateStr)) {
 			return STYLE_ACTIVE;
 		}
-
+		console.log(exceptions);
 		const from = startOfDay(selectedRange.from);
 
 		if (!selectedRange.to) {
