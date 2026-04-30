@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import Step1 from "./components/steps/Step1";
 import Step2 from "./components/steps/Step2";
+import Step3 from "./components/steps/Step3";
 
 export default function App() {
 	const [selectedRange, setSelectedRange] = useState({ from: null, to: null });
@@ -51,20 +52,26 @@ export default function App() {
 						onClick={nextStep}
 						className="bg-[#5cb85c] hover:bg-[#4cae4c] text-white px-4 py-1 rounded text-[12px] font-bold transition-all flex items-center"
 					>
-						{step === totalSteps ? "Zapisz zmiany" : "Następny krok »"}
+						{step == totalSteps ? "Zapisz zmiany" : "Następny krok »"}
 					</button>
 				</div>
 			</nav>
 
 			<main className="flex-grow overflow-auto p-2">
-				{step === 1 && <Step1 onRangeChange={setSelectedRange} />}
-				{step === 2 && (
+				{step == 1 && (
+					<Step1
+						onRangeChange={setSelectedRange}
+						selectedRange={selectedRange}
+					/>
+				)}
+				{step == 2 && (
 					<Step2
 						selectedRange={selectedRange}
 						limitationText={limitationsText}
 						setLimitationsText={setLimitationsText}
 					/>
 				)}
+				{step == 3 && <Step3 selectedRange={selectedRange} />}
 			</main>
 
 			<footer className="bg-white border-t border-gray-300 p-2 text-center">

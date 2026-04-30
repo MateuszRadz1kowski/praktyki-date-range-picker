@@ -9,11 +9,47 @@ export default function Month({
 	firstDayOffset,
 	selectedRange,
 	activeNums = [],
-	activeLetter = [],
+	activeLetter = null,
 	onDateClick,
 }) {
 	const days = [...Array(daysInMonth).keys()].map((num) => num + 1);
 	const blanks = [...Array(firstDayOffset).keys()];
+
+	const STYLE_ACTIVE = "bg-gray-800 text-white font-bold";
+
+	const getColourByDayNumber = (dayOfWeek) => {
+		if (activeNums.includes(dayOfWeek.toString())) {
+			return STYLE_ACTIVE;
+		}
+		return "";
+	};
+
+	const getColourByLetterSet = (dayOfWeek, day) => {
+		const isHoliday = staticHolidays.some(
+			(h) => h.month == monthIndex && h.day == day,
+		);
+
+		switch (activeLetter) {
+			case "A":
+				return dayOfWeek >= 1 && dayOfWeek <= 5 ? STYLE_ACTIVE : "";
+			case "B":
+				return (dayOfWeek >= 1 && dayOfWeek <= 5) || dayOfWeek == 7
+					? STYLE_ACTIVE
+					: "";
+			case "C":
+				return dayOfWeek >= 6 || isHoliday ? STYLE_ACTIVE : "";
+			case "D":
+				return dayOfWeek >= 1 && dayOfWeek <= 5 && !isHoliday
+					? STYLE_ACTIVE
+					: "";
+			case "E":
+				return dayOfWeek >= 1 && dayOfWeek <= 6 && !isHoliday
+					? STYLE_ACTIVE
+					: "";
+			default:
+				return "";
+		}
+	};
 
 	const getDayColour = (day) => {
 		if (!selectedRange?.from) return "";
@@ -21,85 +57,31 @@ export default function Month({
 		const currentDate = startOfDay(new Date(year, monthIndex, day));
 		const from = startOfDay(selectedRange.from);
 
-		if (selectedRange.to && activeNums.length > 0) {
-			const to = startOfDay(selectedRange.to);
-			const isInRange = isWithinInterval(currentDate, { start: from, end: to });
+		if (!selectedRange.to) {
+			return isSameDay(currentDate, from) ? STYLE_ACTIVE : "";
+		}
 
-			if (!isInRange) return "";
+		const to = startOfDay(selectedRange.to);
+		const isInRange = isWithinInterval(currentDate, { start: from, end: to });
 
-			let dayOfWeek = currentDate.getDay();
-			if (dayOfWeek === 0) dayOfWeek = 7;
+		if (!isInRange) return "";
 
-			if (activeNums.includes(dayOfWeek.toString())) {
-				return "bg-gray-800 text-white font-bold";
-			}
+		let dayOfWeek = currentDate.getDay();
+		if (dayOfWeek === 0) dayOfWeek = 7;
+
+		if (!activeLetter && activeNums.length > 0) {
+			const color = getColourByDayNumber(dayOfWeek);
+			if (color) return color;
 			return "";
 		}
 
-		if (selectedRange.to && activeLetter != []) {
-			const to = startOfDay(selectedRange.to);
-			const isInRange = isWithinInterval(currentDate, { start: from, end: to });
-
-			if (!isInRange) return "";
-
-			let dayOfWeek = currentDate.getDay();
-			if (dayOfWeek == 0) dayOfWeek = 7;
-
-			if (activeLetter == "A") {
-				if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-					return "bg-gray-800 text-white font-bold";
-				} else {
-					return "";
-				}
-			} else if (activeLetter == "B") {
-				if ((dayOfWeek >= 1 && dayOfWeek <= 5) || dayOfWeek == 7) {
-					return "bg-gray-800 text-white font-bold";
-				} else {
-					return "";
-				}
-			} else if (activeLetter == "C") {
-				if (
-					(dayOfWeek >= 6 && dayOfWeek <= 7) ||
-					staticHolidays.some((h) => h.month == monthIndex && h.day == day)
-				) {
-					return "bg-gray-800 text-white font-bold";
-				} else {
-					return "";
-				}
-			} else if (activeLetter == "D") {
-				if (
-					dayOfWeek >= 1 &&
-					dayOfWeek <= 5 &&
-					!staticHolidays.some((h) => h.month == monthIndex && h.day == day)
-				) {
-					return "bg-gray-800 text-white font-bold";
-				} else {
-					return "";
-				}
-			} else if (activeLetter == "E") {
-				if (
-					dayOfWeek >= 1 &&
-					dayOfWeek <= 6 &&
-					!staticHolidays.some((h) => h.month == monthIndex && h.day == day)
-				) {
-					return "bg-gray-800 text-white font-bold";
-				} else {
-					return "";
-				}
-			}
+		if (activeLetter) {
+			const color = getColourByLetterSet(dayOfWeek, day);
+			if (color) return color;
+			return "";
 		}
 
-		if (isSameDay(currentDate, from)) return "bg-gray-800 text-white font-bold";
-
-		if (selectedRange.to) {
-			const to = startOfDay(selectedRange.to);
-			const isInRange = isWithinInterval(currentDate, { start: from, end: to });
-
-			if (isSameDay(currentDate, to)) return "bg-gray-800 text-white font-bold";
-			if (isInRange) return "bg-gray-800 text-white";
-		}
-
-		return "";
+		return STYLE_ACTIVE;
 	};
 
 	const monthName = new Date(year, monthIndex).toLocaleString("pl-PL", {

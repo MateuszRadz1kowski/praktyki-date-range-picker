@@ -3,8 +3,8 @@ import Month from "../Month";
 import { startOfDay, isBefore, isSameDay } from "date-fns";
 import { getMonthsData } from "../functions/getMonthData";
 
-export default function Step1({ onRangeChange }) {
-	const [range, setRange] = useState({ from: null, to: null });
+export default function Step1({ onRangeChange, selectedRange }) {
+	const [range, setRange] = useState(selectedRange);
 
 	const handleDateClick = (clickedDate) => {
 		const date = startOfDay(clickedDate);
@@ -37,7 +37,7 @@ export default function Step1({ onRangeChange }) {
 					monthIndex={m.monthIndex}
 					daysInMonth={m.daysCount}
 					firstDayOffset={m.offset}
-					selectedRange={range}
+					selectedRange={selectedRange}
 					onDateClick={handleDateClick}
 				/>
 			))}
