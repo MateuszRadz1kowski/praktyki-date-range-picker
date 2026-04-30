@@ -39,17 +39,19 @@ export default function Step3({
 	};
 
 	const checkIfDateIsActive = (date) => {
-		if (!selectedRange?.from || !selectedRange?.to) return false;
-		const day = date.getDate();
-		const currentStart = startOfDay(date);
+		if (!selectedRange.from || !selectedRange.to) return false;
 
-		if (
-			!isWithinInterval(currentStart, {
-				start: startOfDay(selectedRange.from),
-				end: startOfDay(selectedRange.to),
-			})
-		) {
-			return false;
+		const currentStart = startOfDay(date);
+		const from = startOfDay(selectedRange.from);
+		const to = startOfDay(selectedRange.to);
+
+		if (!isWithinInterval(currentStart, { start: from, end: to })) return false;
+
+		let dayOfWeek = currentStart.getDay();
+		if (dayOfWeek == 0) dayOfWeek = 7;
+
+		if (activeNums.length > 0) {
+			return activeNums.includes(dayOfWeek.toString());
 		}
 		return true;
 	};
@@ -67,6 +69,8 @@ export default function Step3({
 					step={step}
 					exceptions={exceptions}
 					onDateClick={handleDateClick}
+					activeNums={activeNums}
+					activeLetter={activeLetter}
 				/>
 			))}
 		</div>

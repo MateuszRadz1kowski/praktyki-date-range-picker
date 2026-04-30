@@ -7,6 +7,9 @@ import Step3 from "./components/steps/Step3";
 
 export default function App() {
 	const [selectedRange, setSelectedRange] = useState({ from: null, to: null });
+	const [selectedLetter, setSelectedLetter] = useState(null);
+	const [selectedNums, setSelectedNums] = useState([]);
+	const [isF, setIsF] = useState(false);
 	const [exceptions, setExceptions] = useState({ add: [], remove: [] });
 	const [limitationsText, setLimitationsText] = useState("w (1)-(7)");
 	const [step, setStep] = useState(1);
@@ -20,7 +23,19 @@ export default function App() {
 	};
 
 	const nextStep = () => step < totalSteps && setStep(step + 1);
-	const prevStep = () => step > 1 && setStep(step - 1);
+	const prevStep = () => {
+		if (step > 1) {
+			if (step == 3) {
+				setExceptions({ add: [], remove: [] });
+			} else if (step == 2) {
+				setSelectedLetter(null);
+				setSelectedNums([]);
+				setIsF(false);
+				setLimitationsText("w (1)-(7)");
+			}
+			setStep(step - 1);
+		}
+	};
 
 	return (
 		<div className="flex flex-col h-screen bg-[#f0f0f0] overflow-hidden">
@@ -72,6 +87,12 @@ export default function App() {
 						limitationText={limitationsText}
 						setLimitationsText={setLimitationsText}
 						step={step}
+						selectedLetter={selectedLetter}
+						setSelectedLetter={setSelectedLetter}
+						selectedNums={selectedNums}
+						setSelectedNums={setSelectedNums}
+						isF={isF}
+						setIsF={setIsF}
 					/>
 				)}
 				{step == 3 && (
@@ -80,6 +101,8 @@ export default function App() {
 						step={step}
 						setExceptions={setExceptions}
 						exceptions={exceptions}
+						activeLetter={selectedLetter}
+						activeNums={selectedNums}
 					/>
 				)}
 			</main>

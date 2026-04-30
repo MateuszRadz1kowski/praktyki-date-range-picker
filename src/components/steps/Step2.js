@@ -27,12 +27,15 @@ export default function Step2({
 	selectedRange,
 	limitationText,
 	setLimitationsText,
+	selectedLetter,
+	setSelectedLetter,
+	selectedNums,
+	setSelectedNums,
+	isF,
+	setIsF,
 	step,
 }) {
 	const monthsData = getMonthsData();
-	const [selectedLetter, setSelectedLetter] = useState(null);
-	const [selectedNums, setSelectedNums] = useState([]);
-	const [isF, setIsF] = useState(false);
 	const [tooltip, setTooltip] = useState(null);
 	const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
 	const letters = ["A", "B", "C", "D", "E"];
