@@ -27,6 +27,7 @@ export default function Step2({
 	selectedRange,
 	limitationText,
 	setLimitationsText,
+	step,
 }) {
 	const monthsData = getMonthsData();
 	const [selectedLetter, setSelectedLetter] = useState(null);
@@ -184,7 +185,7 @@ export default function Step2({
 								: selectedNums
 						}
 						activeLetter={selectedLetter}
-						onDateClick={() => {}}
+						step={step}
 					/>
 				))}
 			</div>

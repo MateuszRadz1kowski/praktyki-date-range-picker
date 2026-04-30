@@ -7,6 +7,7 @@ import Step3 from "./components/steps/Step3";
 
 export default function App() {
 	const [selectedRange, setSelectedRange] = useState({ from: null, to: null });
+	const [exceptions, setExceptions] = useState({ add: [], remove: [] });
 	const [limitationsText, setLimitationsText] = useState("w (1)-(7)");
 	const [step, setStep] = useState(1);
 	const totalSteps = 4;
@@ -62,6 +63,7 @@ export default function App() {
 					<Step1
 						onRangeChange={setSelectedRange}
 						selectedRange={selectedRange}
+						step={step}
 					/>
 				)}
 				{step == 2 && (
@@ -69,9 +71,17 @@ export default function App() {
 						selectedRange={selectedRange}
 						limitationText={limitationsText}
 						setLimitationsText={setLimitationsText}
+						step={step}
 					/>
 				)}
-				{step == 3 && <Step3 selectedRange={selectedRange} />}
+				{step == 3 && (
+					<Step3
+						selectedRange={selectedRange}
+						step={step}
+						setExceptions={setExceptions}
+						exceptions={exceptions}
+					/>
+				)}
 			</main>
 
 			<footer className="bg-white border-t border-gray-300 p-2 text-center">

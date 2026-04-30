@@ -1,5 +1,5 @@
 import React from "react";
-import { isSameDay, isWithinInterval, startOfDay } from "date-fns";
+import { format, isSameDay, isWithinInterval, startOfDay } from "date-fns";
 import { staticHolidays } from "./steps/Step2";
 
 export default function Month({
@@ -11,6 +11,8 @@ export default function Month({
 	activeNums = [],
 	activeLetter = null,
 	onDateClick,
+	step,
+	exceptions = { add: [], remove: [] },
 }) {
 	const days = [...Array(daysInMonth).keys()].map((num) => num + 1);
 	const blanks = [...Array(firstDayOffset).keys()];
@@ -55,6 +57,15 @@ export default function Month({
 		if (!selectedRange?.from) return "";
 
 		const currentDate = startOfDay(new Date(year, monthIndex, day));
+		const dateStr = format(currentDate, "yyyy-MM-dd");
+
+		if (exceptions.remove.includes(dateStr)) {
+			return "";
+		}
+		if (exceptions.add.includes(dateStr)) {
+			return STYLE_ACTIVE;
+		}
+
 		const from = startOfDay(selectedRange.from);
 
 		if (!selectedRange.to) {
@@ -110,8 +121,20 @@ export default function Month({
 				{days.map((day) => (
 					<div
 						key={`day-${monthIndex}-${day}`}
-						onClick={() => onDateClick(new Date(year, monthIndex, day))}
 						className={`h-6 flex items-center justify-center border-b border-r border-gray-100 cursor-pointer hover:bg-blue-100 transition-colors ${getDayColour(day)}`}
+						onClick={() => {
+							const clickedDate = new Date(year, monthIndex, day);
+							switch (step) {
+								case 1:
+									onDateClick(clickedDate);
+									break;
+								case 3:
+									onDateClick(clickedDate);
+									break;
+								default:
+									break;
+							}
+						}}
 					>
 						{day}
 					</div>
