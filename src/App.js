@@ -4,13 +4,17 @@ import { pl } from "date-fns/locale";
 import Step1 from "./components/steps/Step1";
 import Step2 from "./components/steps/Step2";
 import Step3 from "./components/steps/Step3";
+import Step4 from "./components/steps/Step4";
 
 export default function App() {
+	//Stany globalne zapisujące wszystkie wybrane opcje
 	const [selectedRange, setSelectedRange] = useState({ from: null, to: null });
 	const [selectedLetter, setSelectedLetter] = useState(null);
 	const [selectedNums, setSelectedNums] = useState([]);
 	const [isF, setIsF] = useState(false);
 	const [exceptions, setExceptions] = useState({ add: [], remove: [] });
+	const [extraDescription, setExtraDescription] = useState("");
+
 	const [limitationsText, setLimitationsText] = useState("w (1)-(7)");
 	const [step, setStep] = useState(1);
 	const totalSteps = 4;
@@ -22,10 +26,13 @@ export default function App() {
 		4: "Dodatkowy opis",
 	};
 
+	//Funkcje do przechodzenia między krokami i resetowania stanów przy cofaniu
 	const nextStep = () => step < totalSteps && setStep(step + 1);
 	const prevStep = () => {
 		if (step > 1) {
-			if (step == 3) {
+			if (step == 4) {
+				setExtraDescription("");
+			} else if (step == 3) {
 				setExceptions({ add: [], remove: [] });
 			} else if (step == 2) {
 				setSelectedLetter(null);
@@ -73,6 +80,7 @@ export default function App() {
 				</div>
 			</nav>
 
+			{/* Renderowanie odpowiedniego kroku w zależności od wartości `step` */}
 			<main className="flex-grow overflow-auto p-2">
 				{step == 1 && (
 					<Step1
@@ -105,8 +113,19 @@ export default function App() {
 						activeNums={selectedNums}
 					/>
 				)}
+				{step == 4 && (
+					<Step4
+						extraDescription={extraDescription}
+						setExtraDescription={setExtraDescription}
+						selectedRange={selectedRange}
+						exceptions={exceptions}
+						activeLetter={selectedLetter}
+						activeNums={selectedNums}
+					/>
+				)}
 			</main>
 
+			{/* generowanie tekstu podsumowania na podstawie wybranych opcji */}
 			<footer className="bg-white border-t border-gray-300 p-2 text-center">
 				<div className="text-[13px] text-gray-700 font-medium italic">
 					{selectedRange.from && selectedRange.to
@@ -118,7 +137,7 @@ export default function App() {
 								exceptions.remove.length > 0
 									? ` oprócz ${exceptions.remove.map((day) => format(new Date(day), "d.MM")).join(", ")}`
 									: ""
-							}`
+							} ${extraDescription ? `, ${extraDescription}` : ""}`
 						: "wybierz zakres dat na kalendarzu"}
 				</div>
 			</footer>

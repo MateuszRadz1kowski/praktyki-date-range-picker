@@ -3,24 +3,19 @@ import { getMonthsData } from "../functions/getMonthData";
 import Month from "../Month";
 import { set } from "date-fns";
 
-export const staticHolidays = [
-	{ month: 0, day: 1 },
-	{ month: 0, day: 6 },
-	{ month: 4, day: 1 },
-	{ month: 4, day: 3 },
-	{ month: 7, day: 15 },
-	{ month: 10, day: 1 },
-	{ month: 10, day: 11 },
-	{ month: 11, day: 25 },
-	{ month: 11, day: 26 },
-];
-
-const letter_tooltip = {
+const LETTER_TOOLTIP = {
 	A: "kursuje od poniedziałku do piątku",
 	B: "kursuje od poniedziałku do piątku i w niedziele",
 	C: "kursuje w soboty, niedziele i święta",
 	D: "kursuje od poniedziałku do piątku oprócz świąt",
 	E: "kursuje od poniedziałku do soboty oprócz świąt",
+	1: "kursuje w poniedziałki",
+	2: "kursuje we wtorki",
+	3: "kursuje w środy",
+	4: "kursuje w czwartki",
+	5: "kursuje w piątki",
+	6: "kursuje w soboty",
+	7: "kursuje w niedziele",
 };
 
 export default function Step2({
@@ -41,6 +36,7 @@ export default function Step2({
 	const letters = ["A", "B", "C", "D", "E"];
 	const numbers = ["1", "2", "3", "4", "5", "6", "7"];
 
+	//generowanie tekstu ograniczeń na podstawie poszczególnych dni tygodnia (numery)
 	const generateNumbersText = (nums) => {
 		const sorted = [...nums].map(Number).sort((a, b) => a - b);
 		let ranges = [];
@@ -58,6 +54,7 @@ export default function Step2({
 		return ranges.join(",");
 	};
 
+	// Aktualizacja tekstu ograniczeń przy zmianie ograniczeń
 	useEffect(() => {
 		let text = "w ";
 
@@ -79,7 +76,7 @@ export default function Step2({
 	}, [selectedLetter, selectedNums, isF, setLimitationsText]);
 
 	const selectLetter = (l) => {
-		if (selectedLetter === l) {
+		if (selectedLetter == l) {
 			setSelectedLetter(null);
 		} else {
 			setSelectedLetter(l);
@@ -100,9 +97,6 @@ export default function Step2({
 		<div className="flex flex-col gap-4">
 			<div className="bg-gray-50 border border-gray-300 p-4 rounded-sm shadow-sm flex flex-wrap gap-8 items-start">
 				<div className="flex flex-col gap-2">
-					<span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-						Zestaw (A-E)
-					</span>
 					<div className="flex gap-1">
 						{letters.map((l) => (
 							<button
@@ -114,7 +108,7 @@ export default function Step2({
 										: "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
 								}`}
 								onMouseEnter={(e) => {
-									setTooltip(letter_tooltip[l]);
+									setTooltip(LETTER_TOOLTIP[l]);
 									setTooltipPos({ x: e.clientX, y: e.clientY });
 								}}
 								onMouseMove={(e) =>
@@ -129,9 +123,6 @@ export default function Step2({
 				</div>
 
 				<div className="flex flex-col gap-2">
-					<span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-						Dni tygodnia (1-7)
-					</span>
 					<div className="flex gap-1">
 						{numbers.map((n) => (
 							<button
@@ -142,6 +133,14 @@ export default function Step2({
 										? "bg-green-600 text-white border-green-700 shadow-md"
 										: "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
 								}`}
+								onMouseEnter={(e) => {
+									setTooltip(LETTER_TOOLTIP[n]);
+									setTooltipPos({ x: e.clientX, y: e.clientY });
+								}}
+								onMouseMove={(e) =>
+									setTooltipPos({ x: e.clientX, y: e.clientY })
+								}
+								onMouseLeave={() => setTooltip(null)}
 							>
 								{n}
 							</button>
@@ -150,9 +149,6 @@ export default function Step2({
 				</div>
 
 				<div className="flex flex-col gap-2">
-					<span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-						Inne
-					</span>
 					<button
 						onClick={toggleF}
 						className={`w-9 h-9 flex items-center justify-center border rounded font-bold transition-all ${

@@ -1,6 +1,17 @@
 import React from "react";
 import { format, isSameDay, isWithinInterval, startOfDay } from "date-fns";
-import { staticHolidays } from "./steps/Step2";
+
+export const STATIC_HOLIDAYS = [
+	{ month: 0, day: 1 },
+	{ month: 0, day: 6 },
+	{ month: 4, day: 1 },
+	{ month: 4, day: 3 },
+	{ month: 7, day: 15 },
+	{ month: 10, day: 1 },
+	{ month: 10, day: 11 },
+	{ month: 11, day: 25 },
+	{ month: 11, day: 26 },
+];
 
 export default function Month({
 	year,
@@ -19,6 +30,7 @@ export default function Month({
 
 	const STYLE_ACTIVE = "bg-gray-800 text-white font-bold";
 
+	//sprawdza czy przekazany dzień tygodnia znajduje się w tablicy aktywnych numerów, zwraca odpowiedni kolor
 	const getColourByDayNumber = (dayOfWeek) => {
 		if (activeNums.includes(dayOfWeek.toString())) {
 			return STYLE_ACTIVE;
@@ -26,8 +38,9 @@ export default function Month({
 		return "";
 	};
 
+	//odznacza dni, na podstawie wybranego filtru literowego
 	const getColourByLetterSet = (dayOfWeek, day) => {
-		const isHoliday = staticHolidays.some(
+		const isHoliday = STATIC_HOLIDAYS.some(
 			(h) => h.month == monthIndex && h.day == day,
 		);
 
@@ -53,6 +66,7 @@ export default function Month({
 		}
 	};
 
+	//Główna funkcja określająca kolor dnia, na podstawie wyjatków, zakresu i filtrów
 	const getDayColour = (day) => {
 		if (!selectedRange?.from) return "";
 
@@ -121,6 +135,7 @@ export default function Month({
 					<div
 						key={`day-${monthIndex}-${day}`}
 						className={`h-6 flex items-center justify-center border-b border-r border-gray-100 cursor-pointer hover:bg-blue-100 transition-colors ${getDayColour(day)}`}
+						//w zależności od kroku, jaką funkcję wywołać po kliknięciu
 						onClick={() => {
 							const clickedDate = new Date(year, monthIndex, day);
 							switch (step) {

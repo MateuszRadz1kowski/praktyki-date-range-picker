@@ -13,6 +13,7 @@ export default function Step3({
 }) {
 	const monthsData = getMonthsData();
 
+	//Wybieranie wyjątków
 	const handleDateClick = (clickedDate) => {
 		const dateStr = format(startOfDay(clickedDate), "yyyy-MM-dd");
 		const isInitiallyActive = checkIfDateIsActive(clickedDate);
@@ -38,6 +39,7 @@ export default function Step3({
 		});
 	};
 
+	// Funkcja pomocnicze do określania statusu dnia (wybrany/niewybrany)
 	const checkIfDateIsActive = (date) => {
 		if (!selectedRange.from || !selectedRange.to) return false;
 

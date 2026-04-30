@@ -6,6 +6,7 @@ import { getMonthsData } from "../functions/getMonthData";
 export default function Step1({ onRangeChange, selectedRange, step }) {
 	const [range, setRange] = useState(selectedRange);
 
+	//Zapisywanie daty klikniętej przez użytkownika i aktualizacja zakresu
 	const handleDateClick = (clickedDate) => {
 		const date = startOfDay(clickedDate);
 		if (!range.from || (range.from && range.to)) {

@@ -1,3 +1,4 @@
+//dane do generowania miesięcy w kalendarzu
 export const getMonthsData = () => {
 	const months = [];
 	const startYear = 2025;
