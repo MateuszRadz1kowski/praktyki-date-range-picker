@@ -5,6 +5,10 @@ import Step1 from "./components/steps/Step1";
 import Step2 from "./components/steps/Step2";
 import Step3 from "./components/steps/Step3";
 import Step4 from "./components/steps/Step4";
+import {
+	formatGroupedDates,
+	formatToRoman,
+} from "./components/functions/FormatDescription";
 
 export default function App() {
 	//Stany globalne zapisujące wszystkie wybrane opcje
@@ -128,17 +132,19 @@ export default function App() {
 			{/* generowanie tekstu podsumowania na podstawie wybranych opcji */}
 			<footer className="bg-white border-t border-gray-300 p-2 text-center">
 				<div className="text-[13px] text-gray-700 font-medium italic">
-					{selectedRange.from && selectedRange.to
-						? `kursuje od ${format(selectedRange.from, "dd MMMM yyyy", { locale: pl })} do ${format(selectedRange.to, "d MMMM yyyy", { locale: pl })} ${limitationsText}${
-								exceptions.add.length > 0
-									? ` oraz ${exceptions.add.map((day) => format(new Date(day), "d.MM")).join(", ")}`
-									: ""
-							}${
-								exceptions.remove.length > 0
-									? ` oprócz ${exceptions.remove.map((day) => format(new Date(day), "d.MM")).join(", ")}`
-									: ""
-							} ${extraDescription ? `, ${extraDescription}` : ""}`
-						: "wybierz zakres dat na kalendarzu"}
+					{selectedRange.from && selectedRange.to ? (
+						<>
+							{`kursuje od ${formatToRoman(selectedRange.from)} do ${formatToRoman(selectedRange.to)} `}
+							{`${limitationsText}`}
+							{exceptions.add.length > 0 &&
+								` oraz ${formatGroupedDates(exceptions.add)}`}
+							{exceptions.remove.length > 0 &&
+								` oprócz ${formatGroupedDates(exceptions.remove)}`}
+							{extraDescription && `; ${extraDescription}`}
+						</>
+					) : (
+						"wybierz zakres dat na kalendarzu"
+					)}
 				</div>
 			</footer>
 		</div>
