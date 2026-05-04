@@ -2,6 +2,7 @@ import React from "react";
 import Month from "../Month";
 import { format, startOfDay, isSameDay, isWithinInterval } from "date-fns";
 import { getMonthsData } from "../functions/getMonthData";
+import { STATIC_HOLIDAYS } from "../Month";
 
 export default function Step3({
 	selectedRange,
@@ -52,7 +53,28 @@ export default function Step3({
 		let dayOfWeek = currentStart.getDay();
 		if (dayOfWeek == 0) dayOfWeek = 7;
 
-		if (activeNums.length > 0) {
+		if (activeLetter) {
+			const isHoliday = STATIC_HOLIDAYS.some(
+				(h) => h.month == date.getMonth() && h.day == date.getDate(),
+			);
+
+			switch (activeLetter) {
+				case "A":
+					return dayOfWeek >= 1 && dayOfWeek <= 5;
+				case "B":
+					return (dayOfWeek >= 1 && dayOfWeek <= 5) || dayOfWeek === 7;
+				case "C":
+					return dayOfWeek >= 6 || isHoliday;
+				case "D":
+					return dayOfWeek >= 1 && dayOfWeek <= 5 && !isHoliday;
+				case "E":
+					return dayOfWeek >= 1 && dayOfWeek <= 6 && !isHoliday;
+				default:
+					return false;
+			}
+		}
+
+		if (activeNums && activeNums.length > 0) {
 			return activeNums.includes(dayOfWeek.toString());
 		}
 		return true;

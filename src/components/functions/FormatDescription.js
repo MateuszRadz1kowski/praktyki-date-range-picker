@@ -21,7 +21,6 @@ export const formatToRoman = (date) => {
 	const day = d.getDate();
 	const month = ROMAN_MONTHS[d.getMonth()];
 	const yearShort = format(d, "yy");
-	console.log("formatToRoman:", { date, day, month, yearShort });
 	return `${day} ${month} ${yearShort}r.`;
 };
 
@@ -49,7 +48,6 @@ export const formatGroupedDates = (dateStrings) => {
 		}
 	});
 	groups.push(currentGroup);
-	console.log("formatGroupedDates:", { dateStrings, groups });
 
 	return groups
 		.map((group) => {
