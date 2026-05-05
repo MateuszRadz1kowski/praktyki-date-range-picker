@@ -29,8 +29,10 @@ export default function Step2({
 	isF,
 	setIsF,
 	step,
+	startYear = 2025,
+	startMonth = 11,
 }) {
-	const monthsData = getMonthsData();
+	const monthsData = getMonthsData(startYear, startMonth);
 	const [tooltip, setTooltip] = useState(null);
 	const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
 	const letters = ["A", "B", "C", "D", "E"];
@@ -170,7 +172,7 @@ export default function Step2({
 				</div>
 			)}
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-1">
-				{getMonthsData().map((m) => (
+				{getMonthsData(startYear, startMonth).map((m) => (
 					<Month
 						key={m.id}
 						year={m.year}

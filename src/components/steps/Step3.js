@@ -11,8 +11,10 @@ export default function Step3({
 	setExceptions,
 	activeNums,
 	activeLetter,
+	startYear = 2025,
+	startMonth = 11,
 }) {
-	const monthsData = getMonthsData();
+	const monthsData = getMonthsData(startYear, startMonth);
 
 	//Wybieranie wyjątków
 	const handleDateClick = (clickedDate) => {

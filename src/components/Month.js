@@ -1,5 +1,5 @@
 import React from "react";
-import { format, isSameDay, isWithinInterval, startOfDay } from "date-fns";
+import { format, isSameDay, isWithinInterval, startOfDay, isBefore, isAfter } from "date-fns";
 
 export const STATIC_HOLIDAYS = [
 	{ month: 0, day: 1 },
@@ -24,11 +24,20 @@ export default function Month({
 	onDateClick,
 	step,
 	exceptions = { add: [], remove: [] },
+	minDate = null,
+	maxDate = null,
 }) {
 	const days = [...Array(daysInMonth).keys()].map((num) => num + 1);
 	const blanks = [...Array(firstDayOffset).keys()];
 
 	const STYLE_ACTIVE = "bg-gray-800 text-white font-bold";
+
+	const isOutOfRange = (day) => {
+		const date = startOfDay(new Date(year, monthIndex, day));
+		if (minDate && isBefore(date, startOfDay(minDate))) return true;
+		if (maxDate && isAfter(date, startOfDay(maxDate))) return true;
+		return false;
+	};
 
 	//sprawdza czy przekazany dzień tygodnia znajduje się w tablicy aktywnych numerów, zwraca odpowiedni kolor
 	const getColourByDayNumber = (dayOfWeek) => {
@@ -134,7 +143,7 @@ export default function Month({
 				{days.map((day) => (
 					<div
 						key={`day-${monthIndex}-${day}`}
-						className={`h-6 flex items-center justify-center border-b border-r border-gray-100 cursor-pointer hover:bg-blue-100 transition-colors ${getDayColour(day)}`}
+						className={`h-6 flex items-center justify-center border-b border-r border-gray-100 transition-colors ${isOutOfRange(day) ? "text-gray-300 cursor-not-allowed bg-gray-50" : "cursor-pointer hover:bg-blue-100"} ${!isOutOfRange(day) ? getDayColour(day) : ""}`}
 						//w zależności od kroku, jaką funkcję wywołać po kliknięciu
 						onClick={() => {
 							const clickedDate = new Date(year, monthIndex, day);

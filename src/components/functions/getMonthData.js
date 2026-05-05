@@ -1,10 +1,12 @@
-//dane do generowania miesięcy w kalendarzu
-export const getMonthsData = () => {
+// dane do generowania miesięcy w kalendarzu
+export const getMonthsData = (
+	startYear = 2025,
+	startMonth = 11,
+	count = 14,
+) => {
 	const months = [];
-	const startYear = 2025;
-	const startMonth = 11;
 
-	for (let i = 0; i < 14; i++) {
+	for (let i = 0; i < count; i++) {
 		const d = new Date(startYear, startMonth + i, 1);
 		const year = d.getFullYear();
 		const monthIndex = d.getMonth();

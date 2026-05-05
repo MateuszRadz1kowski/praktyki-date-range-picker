@@ -1,152 +1,137 @@
 import React, { useState } from "react";
-import { format } from "date-fns";
-import { pl } from "date-fns/locale";
-import Step1 from "./components/steps/Step1";
-import Step2 from "./components/steps/Step2";
-import Step3 from "./components/steps/Step3";
-import Step4 from "./components/steps/Step4";
+import DateRangePicker from "./components/DateRangePicker";
 import {
 	formatGroupedDates,
 	formatToRoman,
 } from "./components/functions/FormatDescription";
 
+// Konfiguracja – tu można zmienić rok startowy i dozwolony zakres dat
+const START_YEAR = 2025;
+const START_MONTH = 11;
+const MIN_DATE = new Date(2025, 11, 14);
+const MAX_DATE = new Date(2026, 11, 12);
+
 export default function App() {
-	//Stany globalne zapisujące wszystkie wybrane opcje
-	const [selectedRange, setSelectedRange] = useState({ from: null, to: null });
-	const [selectedLetter, setSelectedLetter] = useState(null);
-	const [selectedNums, setSelectedNums] = useState([]);
-	const [isF, setIsF] = useState(false);
-	const [exceptions, setExceptions] = useState({ add: [], remove: [] });
-	const [extraDescription, setExtraDescription] = useState("");
+	const [legends, setLegends] = useState([]);
+	const [modalOpen, setModalOpen] = useState(false);
+	const [editingIndex, setEditingIndex] = useState(null);
+	const [editInitialState, setEditInitialState] = useState(null);
+	const [editInitialStep, setEditInitialStep] = useState(1);
 
-	const [limitationsText, setLimitationsText] = useState("w (1)-(7)");
-	const [step, setStep] = useState(1);
-	const totalSteps = 4;
-
-	const stepTitles = {
-		1: "Zakres dat obowiązywania rozkładu",
-		2: "Ograniczenia kursowania",
-		3: "Wyjątki kursowania",
-		4: "Dodatkowy opis",
+	const openNewLegend = () => {
+		setEditingIndex(null);
+		setEditInitialState(null);
+		setEditInitialStep(1);
+		setModalOpen(true);
 	};
 
-	//Funkcje do przechodzenia między krokami i resetowania stanów przy cofaniu
-	const nextStep = () => step < totalSteps && setStep(step + 1);
-	const prevStep = () => {
-		if (step > 1) {
-			if (step == 4) {
-				setExtraDescription("");
-			} else if (step == 3) {
-				setExceptions({ add: [], remove: [] });
-			} else if (step == 2) {
-				setSelectedLetter(null);
-				setSelectedNums([]);
-				setIsF(false);
-				setLimitationsText("w (1)-(7)");
+	const openEditLegend = (index) => {
+		const legend = legends[index];
+		setEditingIndex(index);
+		setEditInitialState(legend._ui);
+		setEditInitialStep(4);
+		setModalOpen(true);
+	};
+
+	const handleSave = (config) => {
+		setLegends((prev) => {
+			const updated = [...prev];
+			if (editingIndex != null) {
+				updated[editingIndex] = config;
+			} else {
+				updated.push(config);
 			}
-			setStep(step - 1);
-		}
+			return updated;
+		});
+		setModalOpen(false);
+		console.log("Zapisano konfigurację legendy:", config);
+	};
+
+	const handleCancel = () => {
+		setModalOpen(false);
+	};
+
+	const deleteLegend = (index) => {
+		setLegends((prev) => prev.filter((_, i) => i != index));
+	};
+
+	const getLegendLabel = (legend) => {
+		const ui = legend._ui;
+		if (!ui?.selectedRange?.from || !ui?.selectedRange?.to)
+			return "(brak zakresu)";
+		let text = `kursuje od ${formatToRoman(ui.selectedRange.from)} do ${formatToRoman(ui.selectedRange.to)} ${ui.limitationsText}`;
+		if (ui.exceptions?.add?.length > 0)
+			text += ` oraz ${formatGroupedDates(ui.exceptions.add)}`;
+		if (ui.exceptions?.remove?.length > 0)
+			text += ` oprócz ${formatGroupedDates(ui.exceptions.remove)}`;
+		if (ui.extraDescription) text += `; ${ui.extraDescription}`;
+		return text;
 	};
 
 	return (
-		<div className="flex flex-col h-screen bg-[#f0f0f0] overflow-hidden">
-			<header className="bg-[#444] text-white px-3 py-1.5 flex justify-between items-center shadow-sm">
-				<div className="flex items-center gap-2">
-					<div className="bg-[#fdfd96] p-0.5 rounded shadow-inner">
-						<span className="text-black text-[10px]">📖</span>
-					</div>
-					<h1 className="font-bold text-[13px] tracking-tight">
-						Tworzenie nowej legendy do rozkładu
-					</h1>
-				</div>
-			</header>
+		<div className="min-h-screen bg-gray-100 p-6">
+			<div className="max-w-3xl mx-auto">
+				<h1 className="text-xl font-bold text-gray-800 mb-4">
+					Legendy do rozkładu jazdy
+				</h1>
 
-			<nav className="bg-white border-b border-gray-300 px-4 py-2 flex justify-between items-center">
-				<div className="text-[14px] font-semibold text-gray-800">
-					Krok {step} z {totalSteps}:{" "}
-					<span className="font-bold">{stepTitles[step]}</span>
-				</div>
-				<div className="flex gap-2">
-					{step > 1 && (
-						<button
-							onClick={prevStep}
-							className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1 rounded text-[12px] font-bold border border-gray-300 transition-all"
+				<button
+					onClick={openNewLegend}
+					className="mb-6 bg-[#5cb85c] hover:bg-[#4cae4c] text-white px-5 py-2 rounded font-bold text-sm transition-all"
+				>
+					+ Dodaj nową legendę
+				</button>
+
+				{legends.length == 0 && (
+					<p className="text-gray-500 text-sm italic">
+						Brak legend. Kliknij przycisk powyżej, aby dodać.
+					</p>
+				)}
+
+				<ul className="flex flex-col gap-2">
+					{legends.map((legend, index) => (
+						<li
+							key={index}
+							className="bg-white border border-gray-300 rounded shadow-sm p-3 flex justify-between items-center gap-3"
 						>
-							« Poprzedni krok
-						</button>
-					)}
-					<button
-						onClick={nextStep}
-						className="bg-[#5cb85c] hover:bg-[#4cae4c] text-white px-4 py-1 rounded text-[12px] font-bold transition-all flex items-center"
-					>
-						{step == totalSteps ? "Zapisz zmiany" : "Następny krok »"}
-					</button>
-				</div>
-			</nav>
+							<span className="text-[13px] text-gray-700 italic flex-1">
+								{getLegendLabel(legend)}
+							</span>
+							<div className="flex gap-2 shrink-0">
+								<button
+									onClick={() => openEditLegend(index)}
+									className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold transition-all"
+								>
+									Edytuj
+								</button>
+								<button
+									onClick={() => deleteLegend(index)}
+									className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-bold transition-all"
+								>
+									Usuń
+								</button>
+							</div>
+						</li>
+					))}
+				</ul>
+			</div>
 
-			{/* Renderowanie odpowiedniego kroku w zależności od wartości `step` */}
-			<main className="flex-grow overflow-auto p-2">
-				{step == 1 && (
-					<Step1
-						onRangeChange={setSelectedRange}
-						selectedRange={selectedRange}
-						step={step}
-					/>
-				)}
-				{step == 2 && (
-					<Step2
-						selectedRange={selectedRange}
-						limitationText={limitationsText}
-						setLimitationsText={setLimitationsText}
-						step={step}
-						selectedLetter={selectedLetter}
-						setSelectedLetter={setSelectedLetter}
-						selectedNums={selectedNums}
-						setSelectedNums={setSelectedNums}
-						isF={isF}
-						setIsF={setIsF}
-					/>
-				)}
-				{step == 3 && (
-					<Step3
-						selectedRange={selectedRange}
-						step={step}
-						setExceptions={setExceptions}
-						exceptions={exceptions}
-						activeLetter={selectedLetter}
-						activeNums={selectedNums}
-					/>
-				)}
-				{step == 4 && (
-					<Step4
-						extraDescription={extraDescription}
-						setExtraDescription={setExtraDescription}
-						selectedRange={selectedRange}
-						exceptions={exceptions}
-						activeLetter={selectedLetter}
-						activeNums={selectedNums}
-					/>
-				)}
-			</main>
-
-			{/* generowanie tekstu podsumowania na podstawie wybranych opcji */}
-			<footer className="bg-white border-t border-gray-300 p-2 text-center">
-				<div className="text-[13px] text-gray-700 font-medium italic">
-					{selectedRange.from && selectedRange.to ? (
-						<>
-							{`kursuje od ${formatToRoman(selectedRange.from)} do ${formatToRoman(selectedRange.to)} `}
-							{`${limitationsText}`}
-							{exceptions.add.length > 0 &&
-								` oraz ${formatGroupedDates(exceptions.add)}`}
-							{exceptions.remove.length > 0 &&
-								` oprócz ${formatGroupedDates(exceptions.remove)}`}
-							{extraDescription && `; ${extraDescription}`}
-						</>
-					) : (
-						"wybierz zakres dat na kalendarzu"
-					)}
+			{modalOpen && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+					<div className="bg-white w-full max-w-[98vw] h-[95vh] rounded shadow-2xl flex flex-col overflow-hidden">
+						<DateRangePicker
+							initialState={editInitialState}
+							initialStep={editInitialStep}
+							onSave={handleSave}
+							onCancel={handleCancel}
+							startYear={START_YEAR}
+							startMonth={START_MONTH}
+							minDate={MIN_DATE}
+							maxDate={MAX_DATE}
+						/>
+					</div>
 				</div>
-			</footer>
+			)}
 		</div>
 	);
 }

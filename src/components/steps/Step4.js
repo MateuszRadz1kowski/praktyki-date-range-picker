@@ -9,8 +9,10 @@ export default function Step4({
 	exceptions,
 	activeLetter,
 	activeNums,
+	startYear = 2025,
+	startMonth = 11,
 }) {
-	const monthsData = getMonthsData();
+	const monthsData = getMonthsData(startYear, startMonth);
 
 	return (
 		<div className="flex flex-col gap-4">
