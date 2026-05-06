@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getMonthsData } from "../functions/getMonthData";
 import Month from "../Month";
-import { set } from "date-fns";
 
 const LETTER_TOOLTIP = {
 	A: "kursuje od poniedziałku do piątku",
@@ -32,7 +31,6 @@ export default function Step2({
 	startYear = 2025,
 	startMonth = 11,
 }) {
-	const monthsData = getMonthsData(startYear, startMonth);
 	const [tooltip, setTooltip] = useState(null);
 	const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
 	const letters = ["A", "B", "C", "D", "E"];
@@ -56,10 +54,8 @@ export default function Step2({
 		return ranges.join(",");
 	};
 
-	// Aktualizacja tekstu ograniczeń przy zmianie ograniczeń
 	useEffect(() => {
 		let text = "w ";
-
 		if (selectedLetter) {
 			text += `(${selectedLetter})`;
 		} else {
@@ -69,11 +65,9 @@ export default function Step2({
 				text += generateNumbersText(selectedNums);
 			}
 		}
-
 		if (isF) {
 			text += ",(F)";
 		}
-
 		setLimitationsText(text);
 	}, [selectedLetter, selectedNums, isF, setLimitationsText]);
 
@@ -89,22 +83,22 @@ export default function Step2({
 	const toggleNumber = (n) => {
 		setSelectedLetter(null);
 		setSelectedNums((prev) =>
-			prev.includes(n) ? prev.filter((num) => num !== n) : [...prev, n],
+			prev.includes(n) ? prev.filter((num) => num != n) : [...prev, n],
 		);
 	};
 
 	const toggleF = () => setIsF(!isF);
 
 	return (
-		<div className="flex flex-col gap-4">
-			<div className="bg-gray-50 border border-gray-300 p-4 rounded-sm shadow-sm flex flex-wrap gap-8 items-start">
+		<div className="flex flex-col gap-4 relative">
+			<div className="sticky top-0 z-20 bg-gray-50 border border-gray-300 p-2 sm:p-4 rounded-sm shadow-md flex flex-wrap gap-3 sm:gap-8 items-start">
 				<div className="flex flex-col gap-2">
 					<div className="flex gap-1">
 						{letters.map((l) => (
 							<button
 								key={l}
 								onClick={() => selectLetter(l)}
-								className={`w-9 h-9 flex items-center justify-center border rounded font-bold transition-all ${
+								className={`w-8 h-8 sm:w-9 sm:h-9 text-xs sm:text-sm flex items-center justify-center border rounded font-bold transition-all ${
 									selectedLetter === l
 										? "bg-blue-600 text-white border-blue-700 shadow-md"
 										: "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
@@ -130,7 +124,7 @@ export default function Step2({
 							<button
 								key={n}
 								onClick={() => toggleNumber(n)}
-								className={`w-9 h-9 flex items-center justify-center border rounded font-bold transition-all ${
+								className={`w-8 h-8 sm:w-9 sm:h-9 text-xs sm:text-sm flex items-center justify-center border rounded font-bold transition-all ${
 									selectedNums.includes(n)
 										? "bg-green-600 text-white border-green-700 shadow-md"
 										: "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
@@ -153,7 +147,7 @@ export default function Step2({
 				<div className="flex flex-col gap-2">
 					<button
 						onClick={toggleF}
-						className={`w-9 h-9 flex items-center justify-center border rounded font-bold transition-all ${
+						className={`w-8 h-8 sm:w-9 sm:h-9 text-xs sm:text-sm flex items-center justify-center border rounded font-bold transition-all ${
 							isF
 								? "bg-orange-500 text-white border-orange-600 shadow-md"
 								: "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
@@ -165,7 +159,7 @@ export default function Step2({
 			</div>
 			{tooltip && (
 				<div
-					className="fixed z-50 bg-gray-800 text-xs text-gray-100 px-2 py-1 pointer-events-none shadow text-base rounded"
+					className="fixed z-50 bg-gray-800 text-xs text-gray-100 px-2 py-1 pointer-events-none shadow rounded"
 					style={{ left: tooltipPos.x + 12, top: tooltipPos.y + 16 }}
 				>
 					{tooltip}
